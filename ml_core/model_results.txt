@@ -1,0 +1,36 @@
+=== Logistic Regression ===
+BASE -> Acc: 0.978, F1: 0.978, ROC: 0.972
+ENG  -> Acc: 0.978, F1: 0.978, ROC: 0.969
+
+=== KNN ===
+BASE -> Acc: 0.978, F1: 0.978, ROC: 0.976
+ENG  -> Acc: 0.978, F1: 0.978, ROC: 0.980
+
+=== SVM ===
+BASE -> Acc: 0.978, F1: 0.978, ROC: 0.968
+ENG  -> Acc: 0.978, F1: 0.978, ROC: 0.971
+
+=== Decision Tree ===
+BASE -> Acc: 0.917, F1: 0.921, ROC: 0.916
+ENG  -> Acc: 0.912, F1: 0.917, ROC: 0.912
+
+=== Random Forest ===
+BASE -> Acc: 0.978, F1: 0.978, ROC: 0.973
+ENG  -> Acc: 0.974, F1: 0.973, ROC: 0.976
+
+=== Gradient Boosting ===
+BASE -> Acc: 0.974, F1: 0.973, ROC: 0.969
+ENG  -> Acc: 0.974, F1: 0.973, ROC: 0.967
+
+=== XGBoost ===
+BASE -> Acc: 0.969, F1: 0.969, ROC: 0.975
+ENG  -> Acc: 0.978, F1: 0.978, ROC: 0.979
+
+=== LightGBM ===
+BASE -> Acc: 0.978, F1: 0.978, ROC: 0.970
+ENG  -> Acc: 0.978, F1: 0.978, ROC: 0.976
+
+=== CatBoost ===
+BASE -> Acc: 0.978, F1: 0.978, ROC: 0.972
+ENG  -> Acc: 0.978, F1: 0.978, ROC: 0.973
+

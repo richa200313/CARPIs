@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CARPIs — Medicine Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="page.css"/>
+<style>
+.search-bar{display:flex;gap:12px;margin-bottom:20px;}
+.search-bar input{flex:1;background:#fdf5f7;border:2px solid rgba(232,64,104,.2);border-radius:14px;padding:14px 20px;font-family:'DM Sans',sans-serif;font-size:1rem;color:#2D1B2E;outline:none;transition:border-color .2s;}
+.search-bar input:focus{border-color:#E84068;box-shadow:0 0 0 3px rgba(232,64,104,.1);}
+.search-bar button{background:linear-gradient(135deg,#E84068,#FF6B8A);color:#fff;border:none;padding:14px 28px;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:transform .2s;}
+.search-bar button:hover{transform:translateY(-2px);}
+
+.suggestions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:4px;}
+.suggestions span{font-size:.82rem;color:#8A6A76;font-weight:600;}
+.sug-btn{background:#fff0f4;border:1px solid rgba(232,64,104,.25);border-radius:50px;padding:6px 16px;font-size:.83rem;color:#E84068;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.sug-btn:hover{background:#ffe0e8;}
+
+/* Result card */
+.med-card{background:#fff;border-radius:24px;padding:32px 36px;box-shadow:0 8px 40px rgba(232,64,104,.08);border:1px solid rgba(232,64,104,.1);margin-top:12px;}
+.med-card h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:#2D1B2E;margin-bottom:2px;}
+.med-desc{color:#8A6A76;font-size:.92rem;margin-bottom:24px;}
+
+/* Simple info blocks */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:680px){.info-grid{grid-template-columns:1fr;}}
+.info-block{border-radius:16px;padding:18px 20px;}
+.info-block.pink {background:#fff0f4;border-left:4px solid #E84068;}
+.info-block.teal {background:#f0fbfa;border-left:4px solid #2EC4B6;}
+.info-block.amber{background:#fffbeb;border-left:4px solid #f59e0b;}
+.info-block.blue {background:#f0f6ff;border-left:4px solid #3b82f6;}
+.info-block.full {grid-column:1/-1;}
+.info-block h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.info-block.pink h4 {color:#E84068;}
+.info-block.teal h4 {color:#2EC4B6;}
+.info-block.amber h4{color:#d97706;}
+.info-block.blue h4 {color:#3b82f6;}
+.info-block p{font-size:.9rem;color:#2D1B2E;line-height:1.7;}
+
+.source-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;font-size:.78rem;color:#8A6A76;}
+.source-tag{display:flex;align-items:center;gap:5px;background:#f5f5f5;border-radius:50px;padding:4px 12px;}
+.source-tag.ok{background:#e8fdf5;color:#0d7a5f;}
+.source-tag.miss{background:#fdf5f5;color:#c0001e;}
+
+.med-warning{display:flex;align-items:flex-start;gap:10px;background:#fff3f6;border:1px solid rgba(232,64,104,.2);border-radius:12px;padding:12px 16px;margin-top:16px;font-size:.85rem;color:#E84068;}
+.wiki-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:#E84068;text-decoration:none;font-size:.85rem;font-weight:600;}
+.wiki-link:hover{text-decoration:underline;}
+
+.no-result{text-align:center;padding:40px;color:#8A6A76;}
+.no-result i{font-size:3rem;color:#FFB3C6;margin-bottom:12px;display:block;}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <a href="index.html" class="nav-logo">♥ CARP<span>Is</span></a>
+  <div class="nav-links">
+    <a href="diagnose.html"><i class="fa-solid fa-stethoscope"></i> Diagnose</a>
+    <a href="bp.html"><i class="fa-solid fa-heart-pulse"></i> BP</a>
+    <a href="sugar.html"><i class="fa-solid fa-droplet"></i> Sugar</a>
+    <a href="medicine.html" class="active"><i class="fa-solid fa-pills"></i> Medicine</a>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="page-header">
+    <div class="page-icon">💊</div>
+    <h1>Medicine Information</h1>
+    <p>Search any medicine for simple, clear information on what it does, what it's used for, and important precautions.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="search-bar">
+      <input type="text" id="med_name" placeholder="e.g. Aspirin, Metformin, Paracetamol…" onkeydown="if(event.key==='Enter')searchMed()"/>
+      <button onclick="searchMed()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </div>
+    <div class="suggestions">
+      <span>Try:</span>
+      <button class="sug-btn" onclick="q('Aspirin')">Aspirin</button>
+      <button class="sug-btn" onclick="q('Metformin')">Metformin</button>
+      <button class="sug-btn" onclick="q('Lisinopril')">Lisinopril</button>
+      <button class="sug-btn" onclick="q('Paracetamol')">Paracetamol</button>
+      <button class="sug-btn" onclick="q('Atorvastatin')">Atorvastatin</button>
+      <button class="sug-btn" onclick="q('Amlodipine')">Amlodipine</button>
+      <button class="sug-btn" onclick="q('Ibuprofen')">Ibuprofen</button>
+    </div>
+  </div>
+
+  <div class="spinner" id="spinner"></div>
+  <div id="result"></div>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────────────
+   CARPIs Medicine Search — 3-API Aggregator
+   1. Wikipedia REST + MediaWiki (no key, free)
+   2. OpenFDA Drug Labels (no key, free)
+   3. Google Knowledge Graph Search API (free key needed)
+   ───────────────────────────────────────────────────── */
+
+// ⚠️ To enable Google Knowledge Graph results, add your API key below.
+// Get a free key at: https://console.cloud.google.com → Knowledge Graph Search API
+const GOOGLE_KG_KEY = '';   // leave blank to skip Google
+
+function q(name){ document.getElementById('med_name').value = name; searchMed(); }
+
+// Trim verbose text to readable length, then cut at last full sentence
+function simplify(text, maxLen = 250){
+  if(!text) return '';
+  // Strip brackets and parenthetical refs
+  text = text.replace(/\[[\d,\s]+\]/g,'').replace(/\([^)]{0,40}\)/g,'').trim();
+  if(text.length <= maxLen) return text;
+  const cut = text.slice(0, maxLen);
+  const lastDot = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  return (lastDot > 80 ? cut.slice(0, lastDot+1) : cut) + (cut.length < text.length ? '' : '');
+}
+
+// Extract a section from Wikipedia plaintext
+function wikiSection(full, ...headers){
+  for(const h of headers){
+    const re = new RegExp(`\\n${h}\\n([\\s\\S]{30,800}?)(?=\\n[A-Z][^\\n]{0,60}\\n|\\n==|$)`, 'i');
+    const m = full.match(re);
+    if(m){ return simplify(m[1].replace(/\n/g,' ')); }
+  }
+  return '';
+}
+
+// Pick up to N sentences that contain any keyword
+function sentencesWithKeywords(text, keywords, n=3){
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  return sentences
+    .filter(s => keywords.some(k => s.toLowerCase().includes(k)))
+    .slice(0, n)
+    .join(' ');
+}
+
+async function searchMed(){
+  const name = document.getElementById('med_name').value.trim();
+  if(!name) return;
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('spinner').classList.add('show');
+
+  // ── Collect from all 3 sources in parallel ─────────────
+  const [wikiData, fdaData, kgData] = await Promise.allSettled([
+    fetchWikipedia(name),
+    fetchFDA(name),
+    fetchGoogleKG(name)
+  ]);
+
+  const wiki = wikiData.status === 'fulfilled' ? wikiData.value : null;
+  const fda  = fdaData.status  === 'fulfilled' ? fdaData.value  : null;
+  const kg   = kgData.status   === 'fulfilled'  ? kgData.value   : null;
+
+  document.getElementById('spinner').classList.remove('show');
+
+  if(!wiki && !fda && !kg){
+    document.getElementById('result').innerHTML = `<div class="no-result"><i class="fa-solid fa-circle-question"></i><p>No information found for "<strong>${name}</strong>". Try a generic name or check spelling.</p></div>`;
+    return;
+  }
+
+  // ── Merge fields, prefer the richer source ────────────
+  const title    = (fda?.brand || kg?.name || wiki?.title || name);
+  const generic  = (fda?.generic || '');
+  const subtitle = (kg?.desc || wiki?.description || '');
+
+  // What it does
+  const usage = simplify(
+    fda?.indications || kg?.detailedDesc || wiki?.usageSection || wiki?.intro || ''
+  ) || 'Take as directed by your doctor.';
+
+  // Used for (mechanism / purpose)
+  const usedFor = simplify(
+    wiki?.usedFor || fda?.purpose || kg?.desc || ''
+  ) || 'Refer to your prescriber or package leaflet.';
+
+  // How & when to take
+  const howToTake = simplify(fda?.dosage || '') || 'Follow your doctor\'s prescription exactly.';
+
+  // Precautions – pull from all three
+  const precParts = [
+    wiki?.precaution,
+    fda?.warnings,
+    kg?.caution
+  ].filter(Boolean).map(t => simplify(t, 180));
+  const precaution = precParts.length
+    ? precParts.join(' ')
+    : 'Consult your doctor or pharmacist before use.';
+
+  // Side effects
+  const sideEffects = simplify(fda?.sideEffects || wiki?.sideEffects || '')
+    || 'May vary — check the package insert or ask your pharmacist.';
+
+  // Sources status
+  const srcHtml = [
+    { label:'Wikipedia', ok: !!wiki },
+    { label:'FDA',       ok: !!fda  },
+    { label:'Google KG', ok: !!kg   },
+  ].map(s => `<span class="source-tag ${s.ok?'ok':'miss'}"><i class="fa-solid fa-${s.ok?'check':'xmark'}"></i>${s.label}</span>`).join('');
+
+  const wikiLink = wiki?.url || `https://en.wikipedia.org/wiki/${encodeURIComponent(name)}`;
+
+  document.getElementById('result').innerHTML = `
+    <div class="med-card">
+      <h2>${title}${generic && generic.toLowerCase()!==title.toLowerCase() ? ` <small style="font-size:.65em;color:#8A6A76;font-weight:400">(${generic})</small>` : ''}</h2>
+      <p class="med-desc">${subtitle}</p>
+
+      <div class="info-grid">
+        <div class="info-block pink full">
+          <h4><i class="fa-solid fa-circle-info"></i> What it does</h4>
+          <p>${usage}</p>
+        </div>
+        <div class="info-block teal">
+          <h4><i class="fa-solid fa-bullseye"></i> Used for</h4>
+          <p>${usedFor}</p>
+        </div>
+        <div class="info-block amber">
+          <h4><i class="fa-solid fa-triangle-exclamation"></i> Precautions</h4>
+          <p>${precaution}</p>
+        </div>
+        <div class="info-block blue">
+          <h4><i class="fa-solid fa-clock"></i> How &amp; when to take</h4>
+          <p>${howToTake}</p>
+        </div>
+        <div class="info-block full" style="background:#f9f9fb;border-left:4px solid #888;">
+          <h4 style="color:#555"><i class="fa-solid fa-band-aid"></i> Common side effects</h4>
+          <p>${sideEffects}</p>
+        </div>
+      </div>
+
+      <div class="med-warning"><i class="fa-solid fa-shield-halved"></i><span>Always consult a licensed physician or pharmacist before starting or stopping any medicine.</span></div>
+
+      <div class="source-row"><strong style="color:#8A6A76;font-size:.78rem">Sources:</strong>${srcHtml}</div>
+      <a href="${wikiLink}" target="_blank" class="wiki-link"><i class="fa-brands fa-wikipedia-w"></i> Full Wikipedia article</a>
+    </div>`;
+}
+
+/* ── API 1: Wikipedia ─────────────────────────────────── */
+async function fetchWikipedia(name){
+  const [sumRes, mwRes] = await Promise.all([
+    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`),
+    fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name)}&prop=extracts&exintro=false&explaintext=true&format=json&origin=*`)
+  ]);
+  const sum  = await sumRes.json();
+  const mwJ  = await mwRes.json();
+  const pages= mwJ.query.pages;
+  const pid  = Object.keys(pages)[0];
+  const full = pid !== '-1' ? (pages[pid].extract || '') : '';
+
+  if(sum.type === 'https://mediawiki.org/wiki/HyperSwitch/errors/not_found') return null;
+
+  const usageSection = wikiSection(full,'Medical uses','Uses','Indications','Clinical uses','Therapeutic uses');
+  const usedFor      = wikiSection(full,'Mechanism of action','Pharmacology','Mode of action','Pharmacodynamics') || usageSection;
+  const precaution   = wikiSection(full,'Contraindications','Precautions','Warnings','Safety') ||
+                       sentencesWithKeywords(full, ['should not','avoid','caution','contraindicated','not recommended','allergy','overdose','interact']);
+  const sideEffects  = wikiSection(full,'Side effects','Adverse effects','Adverse reactions');
+
+  return {
+    title:      sum.title || name,
+    description:sum.description || '',
+    intro:      simplify(sum.extract || ''),
+    url:        sum.content_urls?.desktop?.page,
+    usageSection, usedFor, precaution, sideEffects
+  };
+}
+
+/* ── API 2: OpenFDA Drug Labels ───────────────────────── */
+async function fetchFDA(name){
+  const trySearch = async (field) => {
+    const url = `https://api.fda.gov/drug/label.json?search=${field}:"${encodeURIComponent(name)}"&limit=1`;
+    const r   = await fetch(url);
+    const j   = await r.json();
+    return j.results?.[0] || null;
+  };
+  let r = await trySearch('openfda.brand_name') || await trySearch('openfda.generic_name') || await trySearch('openfda.substance_name');
+  if(!r) return null;
+
+  const first = (f) => (r[f]?.[0] || '').slice(0, 600);
+  return {
+    brand:      (r.openfda?.brand_name?.[0]   || ''),
+    generic:    (r.openfda?.generic_name?.[0]  || ''),
+    indications: first('indications_and_usage'),
+    purpose:     first('purpose'),
+    dosage:      first('dosage_and_administration'),
+    warnings:    first('warnings_and_cautions') || first('warnings'),
+    sideEffects: first('adverse_reactions'),
+  };
+}
+
+/* ── API 3: Google Knowledge Graph ───────────────────── */
+async function fetchGoogleKG(name){
+  if(!GOOGLE_KG_KEY) return null;
+  const url = `https://kgsearch.googleapis.com/v1/entities:search?query=${encodeURIComponent(name)}&key=${GOOGLE_KG_KEY}&limit=1&indent=True&types=Drug`;
+  const res = await fetch(url);
+  const j   = await res.json();
+  const item= j.itemListElement?.[0]?.result;
+  if(!item) return null;
+  return {
+    name:        item.name || '',
+    desc:        item.description || '',
+    detailedDesc:(item.detailedDescription?.articleBody || '').slice(0,400),
+    caution:     ''   // KG doesn't expose precautions directly
+  };
+}
+</script>
+</body>
+</html>

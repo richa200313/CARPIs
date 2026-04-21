@@ -1,0 +1,15 @@
+DF1 diagnosed_before counts:
+diagnosed_before
+0    565
+1     44
+Name: count, dtype: int64
+DF2 MedCond counts:
+MEDICAL CONDITION (DM/HTN/HD)
+5    252
+7     63
+4     62
+1     53
+6     40
+3     36
+2     21
+Name: count, dtype: int64

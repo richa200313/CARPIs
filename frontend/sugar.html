@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CARPIs — Blood Sugar Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="page.css"/>
+</head>
+<body>
+<nav class="page-nav">
+  <a href="index.html" class="nav-logo">♥ Cardio<span>AI</span></a>
+  <div class="nav-links">
+    <a href="diagnose.html"><i class="fa-solid fa-stethoscope"></i> Diagnose</a>
+    <a href="bp.html"><i class="fa-solid fa-heart-pulse"></i> BP</a>
+    <a href="sugar.html" class="active"><i class="fa-solid fa-droplet"></i> Sugar</a>
+    <a href="medicine.html"><i class="fa-solid fa-pills"></i> Medicine</a>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="page-header">
+    <div class="page-icon">💧</div>
+    <h1>Blood Sugar Analysis</h1>
+    <p>Choose whether your reading was fasting or after a meal — we'll provide the correct clinical classification.</p>
+  </div>
+
+  <!-- Reference chart -->
+  <div class="ref-table">
+    <h3>Blood Sugar Reference</h3>
+    <table>
+      <thead><tr><th>Stage</th><th>Fasting (mg/dL)</th><th>Post-Meal (mg/dL)</th></tr></thead>
+      <tbody>
+        <tr class="row-normal"><td>✓ Normal</td><td>&lt; 100</td><td>&lt; 140</td></tr>
+        <tr class="row-warn"><td>⚠ Prediabetes</td><td>100–125</td><td>140–199</td></tr>
+        <tr class="row-crit"><td>🔴 Diabetic</td><td>≥ 126</td><td>≥ 200</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-card narrow">
+    <div class="form-grid col1">
+      <div class="fg"><label>Blood Sugar Level (mg/dL)</label><input type="number" id="sg_val" value="95" placeholder="e.g. 95"></div>
+      <div class="fg">
+        <label>Reading Type</label>
+        <div class="toggle-group">
+          <label class="toggle-opt"><input type="radio" name="sg_type" value="true" checked><span>Fasting</span></label>
+          <label class="toggle-opt"><input type="radio" name="sg_type" value="false"><span>Post-Meal (2 hrs)</span></label>
+        </div>
+      </div>
+    </div>
+    <button class="page-btn" onclick="submitSugar()"><i class="fa-solid fa-droplet"></i> Check Blood Sugar</button>
+  </div>
+
+  <div class="spinner" id="spinner"></div>
+  <div id="result"></div>
+</main>
+
+<script>
+const API = location.hostname === '127.0.0.1' || location.hostname === 'localhost' ? 'http://127.0.0.1:8001' : '';
+async function submitSugar(){
+  document.getElementById('result').innerHTML='';
+  document.getElementById('spinner').classList.add('show');
+  const fasting=document.querySelector('input[name="sg_type"]:checked').value==='true';
+  try{
+    const res=await fetch(API+'/check-sugar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({blood_sugar:+document.getElementById('sg_val').value,fasting})});
+    const d=await res.json();
+    document.getElementById('result').innerHTML=`<div class="result-card card-${d.color}">
+      <div class="res-badge">${d.stage}</div>
+      <h2>${d.blood_sugar} mg/dL — ${d.fasting?'Fasting':'Post-Meal'}</h2>
+      <div class="res-section"><h4>Clinical Advice</h4><ul>${d.advice.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+      <small>${d.disclaimer}</small>
+    </div>`;
+  }catch(e){document.getElementById('result').innerHTML=`<p class="err">Could not reach the API server.</p>`;}
+  document.getElementById('spinner').classList.remove('show');
+}
+</script>
+</body>
+</html>

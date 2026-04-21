@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CARPIs — Diagnose</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<link rel="stylesheet" href="page.css"/>
+</head>
+<body>
+<nav class="page-nav">
+  <a href="index.html" class="nav-logo">♥ Cardio<span>AI</span></a>
+  <div class="nav-links">
+    <a href="diagnose.html" class="active"><i class="fa-solid fa-stethoscope"></i> Diagnose</a>
+    <a href="bp.html"><i class="fa-solid fa-heart-pulse"></i> BP</a>
+    <a href="sugar.html"><i class="fa-solid fa-droplet"></i> Sugar</a>
+    <a href="medicine.html"><i class="fa-solid fa-pills"></i> Medicine</a>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="page-header">
+    <div class="page-icon">🩺</div>
+    <h1>AI Cardiovascular Risk Assessment</h1>
+    <p>Enter your clinical details below. Our 9-model ensemble will assess your risk and explain the key factors.</p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="fg"><label>Age</label><input type="number" id="d_age" value="45" min="1" max="120"></div>
+      <div class="fg"><label>Gender</label><select id="d_gender"><option value="1">Male</option><option value="0">Female</option></select></div>
+      <div class="fg"><label>Height (cm)</label><input type="number" id="d_height" value="170"></div>
+      <div class="fg"><label>Weight (kg)</label><input type="number" id="d_weight" value="75"></div>
+      <div class="fg"><label>Systolic BP</label><input type="number" id="d_sys" value="120"></div>
+      <div class="fg"><label>Diastolic BP</label><input type="number" id="d_dia" value="80"></div>
+      <div class="fg"><label>Blood Sugar (mg/dL)</label><input type="number" id="d_sugar" value="90"></div>
+      <div class="fg"><label>Heart Rate (bpm)</label><input type="number" id="d_hr" value="72"></div>
+      <div class="fg"><label>Total Cholesterol</label><input type="number" id="d_chol" value="200"></div>
+      <div class="fg"><label>Stress Level (1–10)</label><input type="number" id="d_stress" value="4" min="1" max="10"></div>
+    </div>
+    <button class="page-btn" onclick="submitDiagnose()"><i class="fa-solid fa-brain"></i> Run AI Assessment</button>
+  </div>
+
+  <div class="spinner" id="spinner"></div>
+  <div id="result"></div>
+</main>
+
+<script>
+const API = location.hostname === '127.0.0.1' || location.hostname === 'localhost' ? 'http://127.0.0.1:8001' : '';
+async function submitDiagnose(){
+  document.getElementById('result').innerHTML='';
+  document.getElementById('spinner').classList.add('show');
+  const payload={
+    Age:+document.getElementById('d_age').value,
+    Gender:+document.getElementById('d_gender').value,
+    gender2:+document.getElementById('d_gender').value,
+    Height_cm:+document.getElementById('d_height').value,
+    Weight_kg:+document.getElementById('d_weight').value,
+    occupation_encoded:0,Hypertension:0,
+    systolic_bp:+document.getElementById('d_sys').value,
+    diastolic_bp:+document.getElementById('d_dia').value,
+    total_cholesterol:+document.getElementById('d_chol').value,
+    blood_sugar:+document.getElementById('d_sugar').value,
+    heart_rate:+document.getElementById('d_hr').value,
+    diabetic_encoded:0,smoking_encoded:0,
+    If_smoker_cigarettes_per_day:0,alcohol_encoded:0,
+    physical_activity:1,Average_Sleep_Duration:7,
+    Stress_Level_Self_Assessment:+document.getElementById('d_stress').value,
+    diet_type:1,Steps_in_a_day:5000,family_history:0,Medical_Condition:-1
+  };
+  try{
+    const res=await fetch(API+'/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const d=await res.json();
+    const isHigh=d.prediction===1;
+    const cls=isHigh?'card-high':'card-normal';
+    const explHtml=isHigh&&d.explanation.length?`<div class="res-section"><h4>Why high risk?</h4><ul>${d.explanation.map(f=>`<li>${f}</li>`).join('')}</ul></div>`:'';
+    document.getElementById('result').innerHTML=`<div class="result-card ${cls}">
+      <div class="res-badge">${isHigh?'⚠ Elevated Risk':'✓ Normal Risk'}</div>
+      <h2>Risk Probability: ${d.risk_percentage.toFixed(1)}%</h2>
+      ${explHtml}
+      <div class="res-section"><h4>Recommendations</h4><ul>${d.recommendations.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+      <small>${d.disclaimer}</small>
+    </div>`;
+  }catch(e){document.getElementById('result').innerHTML=`<p class="err">Could not reach the API server. Please ensure it is running on port 8001.</p>`;}
+  document.getElementById('spinner').classList.remove('show');
+}
+</script>
+</body>
+</html>

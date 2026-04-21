@@ -1,0 +1,4 @@
+DF1:
+['Age', 'Gender', 'gender2', 'Height_cm', 'Weight_kg', 'occupation_encoded', 'Hypertension', 'systolic_bp', 'diastolic_bp', 'total_cholesterol', 'blood_sugar', 'heart_rate', 'diabetic_encoded', 'smoking_encoded', 'If smoker, cigarettes per day', 'alcohol_encoded', 'physical_activity', 'Average Sleep Duration', 'Stress Level (Self-Assessment)', 'diet_type', 'Steps in a day', 'family_history', 'diagnosed_before']
+DF2:
+['AGE', 'Sex', 'BLOOD PRESSURE higher', 'blood pressure lower', 'Heart Rate', 'MEDICAL CONDITION (DM/HTN/HD)', 'FAMILY HISTORY OF HEART DISEASE', 'BLOOD SUGAR', 'TOTAL COLESTROL', 'PHYSICAL ACTIVITY', 'SMOKING', 'ALCOHOL HISTORY', 'DIET TYPE', 'Unnamed: 13', 'Unnamed: 14', 'Unnamed: 15', 'STRESS LEVEL']

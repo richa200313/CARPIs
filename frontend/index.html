@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CARPIs — Heart Risk Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+:root{--rose:#FF6B8A;--rose-deep:#E84068;--blush:#FFE4EC;--cream:#FFF7F9;--text:#2D1B2E;--muted:#8A6A76;--teal:#2EC4B6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(255,247,249,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,107,138,.12);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--rose-deep);display:flex;align-items:center;gap:8px;}
+.nav-logo span{font-style:italic;color:var(--text);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:.9rem;font-weight:500;transition:color .2s;display:flex;align-items:center;gap:6px;}
+.nav-links a:hover{color:var(--rose-deep);}
+.nav-cta{background:var(--rose-deep);color:#fff;border:none;padding:10px 24px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(232,64,104,.3);text-decoration:none;}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,64,104,.4);}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.45;pointer-events:none;}
+.blob-1{width:520px;height:520px;background:radial-gradient(circle,#FFB3C6,transparent 70%);top:-80px;left:-120px;animation:drift1 8s ease-in-out infinite;}
+.blob-2{width:400px;height:400px;background:radial-gradient(circle,#B3EDE9,transparent 70%);bottom:40px;right:-100px;animation:drift2 10s ease-in-out infinite;}
+.blob-3{width:300px;height:300px;background:radial-gradient(circle,#FFD6E0,transparent 70%);top:40%;left:60%;animation:drift3 12s ease-in-out infinite;}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,20px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,30px)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(-25px,-15px)}}
+
+.mascot-wrap{position:relative;display:inline-block;margin-bottom:32px;animation:floatUp .8s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes floatUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.mascot{animation:bobble 3s ease-in-out infinite;}
+@keyframes bobble{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.heart-orbit{position:absolute;inset:-28px;animation:spin 6s linear infinite;pointer-events:none;}
+.heart-orbit .h{position:absolute;font-size:22px;}
+.heart-orbit .h:nth-child(1){top:0;left:50%;transform:translateX(-50%);}
+.heart-orbit .h:nth-child(2){top:50%;right:0;transform:translateY(-50%);}
+.heart-orbit .h:nth-child(3){bottom:0;left:50%;transform:translateX(-50%);}
+.heart-orbit .h:nth-child(4){top:50%;left:0;transform:translateY(-50%);}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.greeting{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:700;line-height:1.1;animation:fadeSlide .9s .2s both;}
+.greeting em{color:var(--rose-deep);font-style:italic;}
+.greeting-sub{font-size:1.15rem;color:var(--muted);margin-top:14px;animation:fadeSlide .9s .4s both;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.pulse-badge{display:inline-flex;align-items:center;gap:8px;background:var(--blush);border:1px solid rgba(255,107,138,.3);border-radius:50px;padding:7px 18px;margin-top:18px;font-size:.85rem;color:var(--rose-deep);font-weight:600;animation:fadeSlide .9s .6s both;}
+.pulse-dot{width:9px;height:9px;border-radius:50%;background:var(--rose-deep);animation:pulse 1.4s ease infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+
+/* Feature cards grid */
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:48px;animation:fadeSlide .9s .8s both;position:relative;z-index:1;}
+@media(max-width:800px){.features{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.features{grid-template-columns:1fr;}}
+.feat-card{background:#fff;border-radius:22px;padding:28px 22px;text-align:center;text-decoration:none;color:var(--text);border:1px solid rgba(255,107,138,.12);box-shadow:0 6px 28px rgba(232,64,104,.08);transition:transform .25s,box-shadow .25s;}
+.feat-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(232,64,104,.18);}
+.feat-icon{font-size:2rem;margin-bottom:12px;display:block;}
+.feat-card h3{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:6px;}
+.feat-card p{font-size:.82rem;color:var(--muted);}
+
+.fab{position:fixed;bottom:28px;right:28px;z-index:300;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--rose-deep),#FF6B8A);color:#fff;border:none;font-size:24px;box-shadow:0 10px 28px rgba(232,64,104,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .2s;}
+.fab:hover{transform:scale(1.1);}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">♥ Cardio<span>AI</span></div>
+  <div class="nav-links">
+    <a href="diagnose.html"><i class="fa-solid fa-stethoscope"></i> Diagnose</a>
+    <a href="bp.html"><i class="fa-solid fa-heart-pulse"></i> Blood Pressure</a>
+    <a href="sugar.html"><i class="fa-solid fa-droplet"></i> Blood Sugar</a>
+    <a href="medicine.html"><i class="fa-solid fa-pills"></i> Medicine</a>
+  </div>
+  <a href="diagnose.html" class="nav-cta">Start Now →</a>
+</nav>
+
+<section class="hero">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <div class="mascot-wrap">
+    <div class="heart-orbit"><span class="h">💗</span><span class="h">💓</span><span class="h">💖</span><span class="h">💕</span></div>
+    <div class="mascot">
+      <svg width="160" height="180" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="70" width="100" height="90" rx="22" fill="#FFE4EC" stroke="#FF6B8A" stroke-width="2.5"/>
+        <rect x="40" y="18" width="80" height="66" rx="20" fill="#FFF0F4" stroke="#FF6B8A" stroke-width="2.5"/>
+        <rect x="20" y="30" width="22" height="14" rx="7" fill="#FFB3C6" stroke="#FF6B8A" stroke-width="2"/>
+        <rect x="118" y="30" width="22" height="14" rx="7" fill="#FFB3C6" stroke="#FF6B8A" stroke-width="2"/>
+        <ellipse cx="62" cy="48" rx="12" ry="12" fill="#fff" stroke="#FF6B8A" stroke-width="2"/>
+        <ellipse cx="98" cy="48" rx="12" ry="12" fill="#fff" stroke="#FF6B8A" stroke-width="2"/>
+        <circle cx="64" cy="49" r="5" fill="#E84068"/><circle cx="100" cy="49" r="5" fill="#E84068"/>
+        <circle cx="66" cy="46" r="2" fill="#fff"/><circle cx="102" cy="46" r="2" fill="#fff"/>
+        <ellipse cx="52" cy="62" rx="9" ry="5" fill="#FFB3C6" opacity=".6"/>
+        <ellipse cx="108" cy="62" rx="9" ry="5" fill="#FFB3C6" opacity=".6"/>
+        <path d="M68 68 Q80 78 92 68" stroke="#E84068" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <line x1="80" y1="18" x2="80" y2="6" stroke="#FF6B8A" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="80" cy="4" r="4" fill="#E84068"/>
+        <path d="M72 100 C72 96 66 92 64 96 C62 100 68 108 80 114 C92 108 98 100 96 96 C94 92 88 96 88 100 C88 96 80 90 80 100 Z" fill="#E84068" opacity=".85"/>
+        <rect x="8" y="80" width="24" height="14" rx="7" fill="#FFB3C6" stroke="#FF6B8A" stroke-width="2" transform="rotate(-20 8 80)"/>
+        <rect x="128" y="80" width="24" height="14" rx="7" fill="#FFB3C6" stroke="#FF6B8A" stroke-width="2" transform="rotate(20 152 80)"/>
+        <rect x="48" y="155" width="22" height="22" rx="8" fill="#FFB3C6" stroke="#FF6B8A" stroke-width="2"/>
+        <rect x="90" y="155" width="22" height="22" rx="8" fill="#FFB3C6" stroke="#FF6B8A" stroke-width="2"/>
+        <polyline points="42,130 52,130 56,120 60,140 65,118 70,135 76,130 118,130" stroke="#2EC4B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+  </div>
+  <p class="greeting">Hello, <em>User!</em> 👋<br/>Welcome to <em>CARPIs</em></p>
+  <p class="greeting-sub">Your intelligent companion for early cardiovascular risk prediction.</p>
+  <div class="pulse-badge"><div class="pulse-dot"></div> AI-Powered Heart Health Analysis</div>
+
+  <div class="features">
+    <a href="diagnose.html" class="feat-card">
+      <span class="feat-icon">🩺</span>
+      <h3>Diagnose Yourself</h3>
+      <p>Full AI cardiovascular risk assessment using 9 ML models</p>
+    </a>
+    <a href="bp.html" class="feat-card">
+      <span class="feat-icon">❤️</span>
+      <h3>Blood Pressure</h3>
+      <p>Instant clinical BP staging with personalised advice</p>
+    </a>
+    <a href="sugar.html" class="feat-card">
+      <span class="feat-icon">💧</span>
+      <h3>Blood Sugar</h3>
+      <p>Fasting & post-meal glucose analysis with risk staging</p>
+    </a>
+    <a href="medicine.html" class="feat-card">
+      <span class="feat-icon">💊</span>
+      <h3>Medicine Info</h3>
+      <p>Search any medicine — usage, precautions & more</p>
+    </a>
+  </div>
+</section>
+
+<!-- FAB links to diagnose page -->
+<a href="diagnose.html" class="fab" title="Start Diagnosis"><i class="fa-solid fa-heart-pulse"></i></a>
+</body>
+</html>
