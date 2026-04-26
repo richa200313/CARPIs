@@ -1,6 +1,7 @@
  ❤️ CARPIS – Cardiovascular Anakysis Risk Prediction Intelligent System
 
 CARPIS is an AI-powered healthcare application designed to predict the risk of cardiovascular diseases using machine learning techniques. The system combines clinical and lifestyle data to provide early risk assessment and assist users in preventive healthcare decisions.
+---
 📌 Project Overview
 
 Cardiovascular diseases (CVDs) are one of the leading causes of death globally. Early detection can significantly reduce risk and improve outcomes.
