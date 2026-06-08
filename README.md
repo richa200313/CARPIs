@@ -138,7 +138,7 @@ python test_api.py
 
 Reecha
 MCA Student
-AI in Healthcare | Biomedical Data Science
+AI in Healthcare 
 
  📜 License
 
